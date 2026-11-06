@@ -13,6 +13,7 @@ author's own findings.
 5. Migration lessons (WordPress → Next.js)
 6. Copy-paste and multi-tenant traps
 7. Deploy and verification rules
+8. Search thumbnails and entity linking (branch-office networks)
 
 ---
 
@@ -115,3 +116,31 @@ Sources: (field experience)
 - A deploy without a live health check is unfinished. Verify the public URL, not the editor (`implementation-playbook.md` §12).
 
 Sources: (field experience)
+
+---
+
+## 8. Search thumbnails and entity linking (branch-office networks)
+
+**(field experience, 2026-11)** Owner's complaint: "our representative thumbnail does not show in Google/Naver; Google's AI calls us a small local firm". Root causes and the fix set:
+
+**Thumbnails**
+
+| Check | Rule |
+|---|---|
+| og:image | One per site, **1200x630**, JPG, under 300 KB (1.5 MB files were found; some previewers drop them). Same visual system on every site of the network (emblem + firm name + "<practice> specialist" line; main site without the line). |
+| File name | A **new file name** whenever the artwork changes: KakaoTalk (and other previewers) cache by image URL. Then clear the preview cache **per page URL** (the Kakao debugger "캐시 초기화" clears only the URL you enter; other pages refresh when their cache expires). |
+| Size tags | Declare `og:image:width/height` only when the size is known (site default image); record images keep no size tags. Add `og:image:alt`. |
+| Large preview | Allow `max-image-preview:large` in **separate `googlebot` and `bingbot` meta tags**, not in `robots`: frameworks de-duplicate `<meta name="robots">` (Next.js `next/head` keeps one), so a default robots tag can silently override a page's own `noindex`. Engines combine directives; the most restrictive still applies. |
+| Schema image | Each site's LocalBusiness/Organization `image` = **its own** og image (all satellites pointed to the main site's logo card). Add `logo` (at least 112 px on both sides, crawlable). |
+| On-page image | Mobile Google picks thumbnails from in-page images: a 270x64 logo as the first `<img>`, or a client-rendered body (57 visible characters in the server HTML), gives it nothing to pick. |
+| Reality check | Google **desktop** showed no organic thumbnails for anyone on local "<city> lawyer" queries; judge thumbnails on mobile Google and Naver. Changes appear days (Google) to weeks (Naver) after re-crawl; request it (GSC URL inspection, Bing Submit URLs, Naver 웹 페이지 수집). |
+
+**Entity: branch office vs. the firm**
+- First establish **what the site is**. Here the website was one **branch office** (own business number, own advertising-responsible lawyer), while the firm entity (Wikidata item, Wikipedia article, national hub site) is the head office led by another partner. The AI answer "local firm" was accurate for what our data described.
+- Branch site schema: the office keeps its own `sameAs` (its map listings, its channels). Firm-level identities (Wikidata, Wikipedia, encyclopedia pages, head-office site) go on a **`parentOrganization`** node whose `@id` is the Wikidata URL. Putting them in the office's own `sameAs` asserts "this office IS the firm" — wrong.
+- Wikidata: add the branch site to P856 with rank **normal** (the head-office site stays preferred), referenced to the firm's own hub page; add English label, description and alias; inception only with a source. Never set a branch as headquarters.
+- Wikipedia: conflict-of-interest rules apply. Disclose on the user page, on the article talk page and in every edit summary; keep edits factual (https/URL fixes, links in the article's existing style); never re-add links an editor removed. One account = one person (no shared accounts).
+- Building names: one address can carry two building names in different map services (Google vs Kakao). Confirm with the business before "fixing" NAP.
+- Check what the AI cites: for "<firm name>" the AI Overview cited only an encyclopedia page and the Business Profile, not the firm's websites — fix those sources first.
+
+Sources: [Robots meta tag (max-image-preview)](https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag) · [Logo structured data](https://developers.google.com/search/docs/appearance/structured-data/logo) · [Wikipedia COI guideline (ko)](https://ko.wikipedia.org/wiki/위키백과:이해충돌) · (field experience)

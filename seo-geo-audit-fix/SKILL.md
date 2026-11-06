@@ -89,6 +89,7 @@ Run the modules that fit the request. A full audit runs all of them. For each, c
 ### C. Structured data and entity
 - One canonical `@id` for the organization across all sites. Satellites describe services or departments with `parentOrganization` → that `@id`. Avoid N copies of the same business.
 - name, address, telephone, geo, `openingHoursSpecification`, `hasMap`, and `sameAs` (all official profiles) match the fact sheet exactly.
+- A **branch-office** site keeps only its own profiles in `sameAs`; the firm's Wikidata/Wikipedia/head-office identities go on `parentOrganization` (`@id` = Wikidata URL). Each site's `image` is its own og image; add `logo`. Search thumbnails, `max-image-preview` placement and the Wikidata/Wikipedia (COI) workflow → `references/multisite-and-technical.md` §8.
 - People: `ProfilePage` + `Person` (`worksFor` → org `@id`), not a LocalBusiness subtype per person.
 - Articles: `image`, `publisher.logo`, dates. FAQPage only where the Q&A is visible on the page.
 - Validate a sample with validator.schema.org and the Rich Results Test. Report errors and warnings verbatim.

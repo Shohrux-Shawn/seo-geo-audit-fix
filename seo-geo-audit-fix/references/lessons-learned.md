@@ -18,6 +18,12 @@ listed under the section's Sources.
 
 ## 1. Audit scoping and evidence
 
+**Brief called live sister-office domains "old" (2026-11)**
+- Symptom: plan to deprecate 4 "old" domains on Wikidata.
+- Cause: they were the firm's other offices (head office, regional offices, a specialty centre), all live.
+- Fix: open each domain and read its footer (business number, representative, address) before calling it old.
+- Detect early: Step 0 — map every domain to an owner office.
+
 **Non-existent domains in the audit brief (2026-10)**
 - Symptom: "site down" findings for 6 domains.
 - Cause: the prompt listed planned satellite domains that were never registered.
@@ -68,6 +74,17 @@ Sources: [Guidelines for representing your business](https://support.google.com/
 
 ## 3. Network, entity and cannibalisation
 
+**AI: "local firm, go elsewhere for M&A" (2026-11)**
+- Symptom: Google's AI described the firm as a small local office.
+- Cause: the website is one branch office; its schema carried the branch name and local areaServed; nothing linked it to the firm entity (Wikidata, Wikipedia, head-office site), and the AI cited an encyclopedia page instead.
+- Fix: `parentOrganization` to the firm (`@id` = Wikidata), branch site added to Wikidata P856 (rank normal), knowsAbout lists the real practice areas, disclosed Wikipedia link edits.
+- Detect early: ask "is this site the firm or one office?" in Step 0; read the sources the AI cites.
+
+**Encyclopedia links put in the office's own sameAs (2026-11)**
+- Cause: assumed site = firm.
+- Fix: moved them to `parentOrganization` the same day.
+- Detect early: sameAs means identity; only profiles of exactly this entity belong there.
+
 **Satellites invisible, main `/location` pages ranking instead (2026-11)**
 - Symptom: practice satellites ranked almost nowhere for their own queries.
 - Cause: the main site's region pages targeted the same "<city> + practice" queries — cannibalisation across domains.
@@ -95,6 +112,18 @@ Sources: [Guidelines for representing your business](https://support.google.com/
 Sources: [Spam policies (doorway abuse)](https://developers.google.com/search/docs/essentials/spam-policies) · [LocalBusiness structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business)
 
 ## 4. CMS, deploy and code hygiene
+
+**A default robots tag could have overridden page noindex (2026-11)**
+- Symptom (avoided): adding `max-image-preview:large` as a default `<meta name="robots">`.
+- Cause: next/head de-duplicates meta by name; login and member pages render their own robots `noindex` in a separate Head, and render order decides which survives.
+- Fix: put the directive in separate `googlebot`/`bingbot` tags; verified a noindex page still carries its noindex.
+- Detect early: list files that render both the shared SEO head and their own robots tag.
+
+**Local Docker auto-start rewrote the working repo (2026-11)**
+- Symptom: lockfile rewritten (−2,957 lines) and Linux binaries in `apps/*/node_modules`.
+- Cause: starting Docker Desktop auto-started old containers (`restart: always`) bind-mounted to the working repo; they ran install and build.
+- Fix: stop them, set `--restart=no`, restore the lockfile; test production containers only from an isolated copy (`git archive` into a scratch folder).
+- Detect early: check `docker ps -a` (restart policy, bind-mount source) before starting Docker.
 
 **Admin edits wiped on every deploy (2026-10)**
 - Symptom: legal-page edits saved in the admin disappeared after deploys.
@@ -135,6 +164,21 @@ Sources: [Spam policies (doorway abuse)](https://developers.google.com/search/do
 Sources: [Verify site ownership](https://support.google.com/webmasters/answer/9008080) · [General structured data guidelines (markup must match accurate, visible content)](https://developers.google.com/search/docs/appearance/structured-data/sd-policies) · fixes: `implementation-playbook.md` §1 and §11
 
 ## 5. Indexing, sitemaps and i18n
+
+**Representative thumbnail missing everywhere (2026-11)**
+- Cause: mixed og images (925x657 logo card, 1.5 MB photos), satellites' schema image pointing at the main site, no logo, no large-preview permission, client-rendered body with no meaningful in-page image.
+- Fix: one 1200x630 card per site (new file names), size and alt tags, own schema image and logo, googlebot/bingbot large preview; then Kakao cache reset per URL and GSC/Bing/Naver re-crawl requests. Details: `multisite-and-technical.md` §8.
+- Detect early: for each home page record og:image size/bytes, schema image/logo, first `<img>`, robots tags.
+
+**Root TXT record impossible in the registrar's DNS panel (2026-11)**
+- Cause: the panel requires a host label and strips "@", so no root TXT (SPF, domain-property verification).
+- Fix: verify consoles with the HTML meta tag (URL-prefix property); DMARC `p=reject` alone already blocks spoofing for a domain that sends no mail.
+- Detect early: check whether the DNS UI accepts an empty or "@" host before planning DNS verification.
+
+**Bing "tag not found" right after deploy (2026-11)**
+- Cause: Bing's verifier read a cached copy; the tag was live (checked with the bingbot user agent).
+- Fix: "verify later" and retry hours later, or import the site from GSC.
+- Detect early: curl the home page with the bingbot user agent before blaming the tag.
 
 **Open but not offered: 1,386 URLs stuck (2026-09)**
 - Symptom: huge "Discovered – not indexed" on locale pages.

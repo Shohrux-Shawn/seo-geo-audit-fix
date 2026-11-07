@@ -83,6 +83,7 @@ Sources: [Influencing title links](https://developers.google.com/search/docs/app
 - Article + `author` Person has no direct CTR effect but supports the E-E-A-T picture.
 - Entity graph: keep a table of every official profile (place listings, directories, video, social, sibling sites) with sameAs ✓, NAP match ✓, last update. Update the table and `sameAs` the same day a new channel opens.
 - Do not buy "knowledge panel" services or push wiki entries for a non-notable entity; both backfire. (field experience)
+- Off-site entity layer (Wikidata, Wikipedia, Namuwiki, knowledge panel, profiles, earned mentions) and how AI engines use it → `entity-authority-and-off-site.md`.
 - Code: `implementation-playbook.md` §5.
 
 Sources: [General structured data guidelines](https://developers.google.com/search/docs/appearance/structured-data/sd-policies) · [LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business) · [Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) · [Review snippets](https://developers.google.com/search/docs/appearance/structured-data/review-snippet) · [Search documentation updates (FAQ)](https://developers.google.com/search/updates) · [BreadcrumbList](https://developers.google.com/search/docs/appearance/structured-data/breadcrumb) · [schema.org Attorney](https://schema.org/Attorney) · [schema.org LegalService](https://schema.org/LegalService)

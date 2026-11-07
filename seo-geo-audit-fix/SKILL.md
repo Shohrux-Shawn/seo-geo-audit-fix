@@ -1,6 +1,6 @@
 ---
 name: "seo-geo-audit-fix"
-description: "Audit a website or site network for SEO, local SEO and GEO (AI-search visibility), prove every finding with live evidence, then plan and apply exact fixes after approval (code, redirects, structured data, sitemaps and search-console submission, CMS, Google/Naver/Kakao listings) and verify them live. Use for site audits, rankings, indexing and sitemap problems, NAP or Business Profile checks, AI-answer visibility, or 'audit this project and tell me what to fix'."
+description: "Audit a website or site network for SEO, local SEO and GEO (AI-search visibility), prove every finding with live evidence, then plan and apply exact fixes after approval (code, redirects, structured data, sitemaps and search-console submission, CMS, Google/Naver/Kakao listings) and verify them live. Also covers the off-site entity layer AI engines read (Wikidata, Wikipedia, Namuwiki, knowledge panel, profiles, earned mentions). Use for site audits, rankings, indexing and sitemap problems, NAP or Business Profile checks, AI-answer visibility, 'what does ChatGPT say about our company', Wikidata/Wikipedia/knowledge-panel work, or 'audit this project and tell me what to fix'."
 ---
 
 # SEO · Local SEO · GEO — audit and fix
@@ -35,6 +35,8 @@ Entity:
 - Hours (exact, incl. breaks):
 - Categories (Google / Kakao / Naver):
 - Official profiles (GBP URL, Naver Place ID, Kakao place ID, YouTube, Instagram, directories):
+- Entity IDs (Wikidata QID, Wikipedia pages per language, Namuwiki, Knowledge Graph ID, LinkedIn, Crunchbase):
+- Canonical description (1–2 neutral sentences reused on every profile):
 Markets & engines: (e.g. Google KR, Naver, Daum, Bing; AI: Google AIO, Naver AI Briefing, Perplexity, ChatGPT, Gemini, Copilot)
 Languages / hreflang set:
 Access available: repo path, CMS admin, GSC, Bing WMT, Naver Search Advisor, GBP manager account, browser profile
@@ -158,6 +160,14 @@ Sibling offices that share the brand are not competitors. Missing links between 
 - Trace every wrong AI fact back to the page it came from. Fixing that page is usually the fix.
 - GEO rules (AI search bots, quotable structure, llms.txt priority, Copilot citations) → `references/knowledge-base.md` §8.
 
+### I. Off-site entity authority (wikis, knowledge graph, profiles, earned mentions)
+AI engines describe a company mostly from third-party sources: in industry studies brand *mentions* (web and YouTube) correlate with AI visibility far more than backlinks, and ChatGPT, AI Overviews and Perplexity each lean on different sources (Wikipedia, Reddit, YouTube, LinkedIn, press).
+- **AI source map:** for 5 fixed brand questions per engine, record every cited URL and its domain type. The domains that recur are what to fix or earn. Prompt: `templates/browser-prompts/07-ai-source-map-and-offsite-entity.md`.
+- **Entity inventory:** Wikidata (QID), Wikipedia per language, Namuwiki, knowledge panel / Knowledge Graph ID, LinkedIn, Crunchbase, YouTube, directories/registers, review sites, independent press. Facts match the fact sheet? Linked from the site's `sameAs`? Run `scripts/wikidata_entity_check.py`.
+- **Work the priority ladder:** entity home (About page + Organization JSON-LD + one canonical description) → own profiles → Wikidata if notable → earned coverage → Wikipedia only when its notability test passes.
+- **Wikis are COI territory:** disclose paid/COI editing (Wikimedia Terms of Use), propose changes on talk pages, never buy wiki or "knowledge panel" services, never use sock puppets, never delete criticism.
+- Full playbook, Wikidata property list, Wikipedia source test, Korean wikis, measurement → `references/entity-authority-and-off-site.md`.
+
 ---
 
 ## Step 3 — Findings, scores, and the fix plan
@@ -174,7 +184,7 @@ Severity guide:
 - **Medium:** single-hop redirects, missing sitemap URLs, schema gaps, duplicate titles.
 - **Low:** cosmetic consistency.
 
-Scores 1–10, each with a one-line reason: Technical · On-page · Local · Entity/NAP · Brand search · GEO. Score only what was verified.
+Scores 1–10, each with a one-line reason: Technical · On-page · Local · Entity/NAP · Brand search · GEO · Off-site authority. Score only what was verified.
 
 Apply the **owner-decision filter** before presenting:
 - drop or adjust any recommendation that contradicts the fact sheet;
@@ -219,6 +229,11 @@ Ask for approval per group, unless the user already approved that exact change.
 - Never write, delete or buy reviews. Never claim another business's listing. Never stuff keywords into the business name. Never set "open 24 hours" unless true.
 - Owner or staff reviews of their own business break platform policy. Tell the owner to delete them from their own account; do not do it for them.
 
+### Off-site entity (Wikidata, wikis, profiles)
+- Profiles the company owns: fill them with the fact sheet's canonical facts and description, then add each to `sameAs` and to the fact sheet the same day.
+- Wikidata / Wikipedia / Namuwiki edits are made by a named person with a disclosed COI, never by an agent on a shared account. Prepare the exact statements with their references (Wikidata) or a talk-page edit request (Wikipedia) and hand them to that person. Re-run `scripts/wikidata_entity_check.py` afterwards.
+- Knowledge panel claims and suggested changes are done by the owner through Google's own verification flow.
+
 ### Content
 - In regulated industries (law, medicine, finance), content changes need human approval.
 - Batch in small groups. Keep claims verifiable: registered specialties only, no superlatives or unsupported statistics, no fake testimonials.
@@ -231,6 +246,7 @@ Ask for approval per group, unless the user already approved that exact change.
 - Same day: re-open each changed page or listing in public view and confirm the change shows.
 - 1–3 days: services, posts and review replies often publish late. Re-check.
 - 2–4 weeks: re-run the geo-grid and map-pack tests **signed out and signed in**, the core ranking queries, and the AI questions. Compare with the baseline table. Offer to schedule this check.
+- Monthly for off-site work: AI mention rate and accuracy, cited sources, Knowledge Graph match, Wikidata completeness, new independent mentions (`references/entity-authority-and-off-site.md` §12). Off-site changes take weeks to months to show in AI answers.
 
 ---
 
@@ -239,7 +255,8 @@ Ask for approval per group, unless the user already approved that exact change.
 Use these instead of writing ad-hoc code. All of them are read-only or dry-run by default (anything that sends data needs `--apply`); run any one with `--help` for usage. Secrets come from environment variables only.
 
 - **`templates/seo-geo-facts.md`** — Step 0 fact sheet. Copy it into the project and fill it in.
-- **`templates/browser-prompts/`** — six fill-in prompts for a browser agent: 01 site/network audit · 02 entity/NAP + rankings + GEO live test · 03 strict read-only Business Profile status check · 04 Maps pin/duplicates/geo-grid/map-pack test · 05 profile update stage 1 · 06 profile update stage 2. Its README gives the order and the shared rules.
+- **`templates/browser-prompts/`** — seven fill-in prompts for a browser agent: 01 site/network audit · 02 entity/NAP + rankings + GEO live test · 03 strict read-only Business Profile status check · 04 Maps pin/duplicates/geo-grid/map-pack test · 05 profile update stage 1 · 06 profile update stage 2 · 07 AI source map + off-site entity inventory. Its README gives the order and the shared rules.
+- **`scripts/wikidata_entity_check.py --search "<name>" --lang ko`** then **`--qid Q… --site https://www.example.com --langs en,ko --out DIR`** — module I: labels/descriptions per language, missing core statements, unreferenced core statements, profile identifiers, Wikipedia sitelinks, and whether the site's Organization JSON-LD links the item and matches P856. Read-only (public Wikidata API + one page GET).
 - **`scripts/site_check.py <site>... --max-urls N --forbidden "a,b" --out DIR`**
   - Covers modules A/B/E: redirects, robots/AI bots, llms.txt, sitemap crawl, per-page tags, duplicates, thin pages, forbidden wording, UTM links.
   - Run it first on every site. Use `--max-urls 0` for a full crawl.
@@ -270,6 +287,7 @@ Distilled from real audits, research notes and incidents. Read only what the cur
 - **Step 3 (before scoring) and Step 4 (before applying)** → `references/lessons-learned.md` (symptom → cause → fix → early detection).
 - **Step 4, any code change** → `references/implementation-playbook.md` (safe change workflow, redirects, canonical/hreflang, titles, JSON-LD, robots.txt, llms.txt, Core Web Vitals, internal links, thin/duplicate content, CMS persistence, curl checklist).
 - **Module A sitemaps, Step 4 sitemap fixes, any ownership or submission question** → `references/sitemaps-and-submission.md` (protocol, special sitemaps, splitting, generation per stack, robots.txt, Google/Bing/IndexNow/Naver/Daum steps, monitoring, troubleshooting).
+- **Module I, "what does AI say about our company", Wikidata/Wikipedia/Namuwiki/knowledge-panel work, PR or brand-mention planning** → `references/entity-authority-and-off-site.md` (citation studies, AI source map, priority ladder, entity home, Wikidata notability + property list, Wikipedia source test + COI rules, Korean wikis, knowledge graph, profiles, earned mentions, hard limits, measurement).
 - **Citing a rule, or checking whether it is still current** → `references/sources.md` (verified official URLs, with the verification date; rules not backed by an engine document are marked "field experience").
 
 When a reference and the fact sheet disagree, the fact sheet's owner decisions win; list the conflict under "Skipped by owner decision".
@@ -282,10 +300,10 @@ When a reference and the fact sheet disagree, the fact sheet's owner decisions w
 # <Project> — SEO · Local · GEO audit (<date>)
 ## Summary (5 bullets: biggest risk, fastest win, where we rank, entity/NAP state, AI visibility)
 ## Test conditions (time, signed-in?, location, limits hit)
-## Scores (6 areas, 1–10, one-line reasons)
+## Scores (7 areas, 1–10, one-line reasons)
 ## Findings by severity (table per Step 3)
 ## Fix plan: Do now / Needs owner decision / Plan only / Not ours
-## Tables: per-site checks · NAP master table + canonical values · rankings · geo-grid · GEO answers
+## Tables: per-site checks · NAP master table + canonical values · rankings · geo-grid · GEO answers · AI source map + entity inventory
 ## Skipped by owner decision
 ## NOT VERIFIED (item + reason)
 ## Owner summary (6–10 lines, owner's language, plain words, ends with the decisions needed)

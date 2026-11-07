@@ -15,6 +15,9 @@ Last checked: <YYYY-MM-DD>
 - Hours (exact, incl. breaks):
 - Categories: Google / Kakao / Naver:
 - Official profiles: GBP URL (cid) · Naver Place ID · Kakao place ID · YouTube · Instagram · directories:
+- Entity IDs: Wikidata QID · Wikipedia pages (per language) · Namuwiki · Knowledge Graph ID · LinkedIn · Crunchbase:
+- Founded / founders / leaders (as stated on independent sources):
+- Canonical description (1–2 neutral sentences, reused on every profile):
 
 ## Markets and engines
 - Search: Google <cc>, Naver, Daum, Bing

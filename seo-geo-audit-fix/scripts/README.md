@@ -13,6 +13,7 @@ from environment variables only and are never printed in full.
 | `gsc_sitemaps.py` | A (fix) | `list` (read-only) or `submit` (needs `--apply`) sitemaps in Google Search Console through a service account (`GOOGLE_APPLICATION_CREDENTIALS`). Needs `pip install --upgrade google-api-python-client google-auth`; prints that command if missing. The service-account e-mail must be added in Search Console → Settings → Users and permissions (Full or Owner to submit). | Only `submit --apply` |
 | `nap_compare.py` | G | Master NAP table from a sources CSV against canonical values (JSON), with normalisation so spacing and URL-scheme differences don't count as mismatches. | No |
 | `geo_grid.py` | F | `plan`: exact Google Maps URLs per centre × query plus an empty results CSV. `summary`: grid table and the listings most often in the top 3. | No |
+| `wikidata_entity_check.py` | I | `--search` lists candidate items for a name; `--qid` reports labels/descriptions per language, missing and unreferenced core company statements (P31, P17, P159, P571, P112, P452, P1454, P856, P1448), profile identifiers (LinkedIn, Crunchbase, YouTube, Instagram, X, LEI, Namuwiki), Wikipedia sitelinks, and with `--site` whether the page's Organization JSON-LD links the item (`sameAs`/`@id`/`parentOrganization`) and its host is in P856. Exit 1 on problems. Stdlib only. | No |
 
 Typical order for a sitemap fix: `sitemap_validate.py` (baseline) → code fix
 (`../references/implementation-playbook.md`) → deploy → `sitemap_validate.py` again (0 errors) →

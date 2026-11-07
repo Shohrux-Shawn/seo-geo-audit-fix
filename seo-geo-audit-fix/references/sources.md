@@ -23,7 +23,8 @@ comes from an industry study that was not re-verified for this list.
 12. AI crawlers and llms.txt
 13. Korean attorney-advertising regulation
 14. Framework and server documentation (implementation)
-15. Dropped or redirected URLs
+15. Off-site entity sources: Wikidata, Wikipedia, Knowledge Graph, review rules
+16. Dropped or redirected URLs
 
 ---
 
@@ -225,7 +226,36 @@ verified for this file.
 | nginx `ngx_http_rewrite_module` (`return 301`) | https://nginx.org/en/docs/http/ngx_http_rewrite_module.html |
 | Apache: redirecting and remapping with mod_rewrite | https://httpd.apache.org/docs/2.4/rewrite/remapping.html |
 
-## 15. Dropped or redirected URLs
+## 15. Off-site entity sources: Wikidata, Wikipedia, Knowledge Graph, review rules
+
+Verified live on **2026-11-07** (used by `entity-authority-and-off-site.md`). Wikidata property IDs in that
+file were checked the same day through the public Wikidata API (`wbgetentities`).
+
+| Topic | URL |
+|---|---|
+| Wikidata notability policy (three criteria: sitelink / "serious and publicly available references" / structural need) | https://www.wikidata.org/wiki/Wikidata:Notability |
+| Wikidata disclosure of paid editing (name every organisation or person that pays you) | https://www.wikidata.org/wiki/Wikidata:Disclosure_of_paid_editing |
+| Wikidata request for comment on conflict of interest (neutral labels/descriptions, no edit-warring; community guidance, not policy) | https://www.wikidata.org/wiki/Wikidata:Requests_for_comment/Conflict_of_Interest |
+| Wikidata property: official website (P856) | https://www.wikidata.org/wiki/Property:P856 |
+| Wikipedia notability guideline for organizations and companies (significant, independent, reliable, secondary; multiple sources; press releases and routine coverage excluded) | https://en.wikipedia.org/wiki/Wikipedia:Notability_(organizations_and_companies) |
+| Wikipedia paid-contribution disclosure (required by the Wikimedia Terms of Use; COI editors use talk-page proposals and Articles for Creation) | https://en.wikipedia.org/wiki/Wikipedia:Paid-contribution_disclosure |
+| Wikipedia conflict-of-interest guideline | https://en.wikipedia.org/wiki/Wikipedia:Conflict_of_interest |
+| Google Knowledge Graph Search API (`kgsearch.googleapis.com/v1/entities:search`) | https://developers.google.com/knowledge-graph |
+| Google: Get verified on Google (claim a knowledge panel) | https://support.google.com/knowledgepanel/answer/7534902 |
+| Google: About knowledge panels | https://support.google.com/knowledgepanel/answer/9163198 |
+| Google Organization structured data (`sameAs`, `iso6523Code`, `legalName`, `foundingDate`, `taxID`, `vatID`; used to disambiguate the organisation) | https://developers.google.com/search/docs/appearance/structured-data/organization |
+| Google spam policies — link spam includes "links with optimized anchor text in articles, guest posts, or press releases distributed on other sites" | https://developers.google.com/search/docs/essentials/spam-policies |
+| FTC Consumer Reviews and Testimonials Rule Q&A (in force 2024-10-21; §465.2 fake reviews, §465.5 insider reviews need clear disclosure) | https://www.ftc.gov/business-guidance/resources/consumer-reviews-testimonials-rule-questions-answers |
+
+Industry studies cited as **(third-party study)**, not re-verified: [Ahrefs, AI Overview brand correlation](https://ahrefs.com/blog/ai-overview-brand-correlation/) ·
+[Ahrefs, AI brand visibility correlations](https://ahrefs.com/blog/ai-brand-visibility-correlations/) ·
+[Profound, AI platform citation patterns](https://www.tryprofound.com/blog/ai-platform-citation-patterns) ·
+[Semrush, most-cited domains in AI](https://www.semrush.com/blog/most-cited-domains-ai/).
+
+Namuwiki's editing-policy pages (`나무위키:편집지침`) returned no readable policy text to the scraper on
+2026-11-07; the Namuwiki notes are therefore marked (field experience).
+
+## 16. Dropped or redirected URLs
 
 - `https://developers.google.com/search/docs/appearance/structured-data/faqpage` — now redirects to the
   Search documentation updates page; Google removed the FAQ rich result documentation on 2026-06-15.

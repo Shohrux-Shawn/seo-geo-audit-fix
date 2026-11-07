@@ -17,6 +17,8 @@ Each prompt can be pasted on its own. Fill every `<placeholder>` from the projec
 | 6 | `06-gbp-update-stage2.md` | **edits** (after approval) | Attributes, retried replies, then the address change alone, last |
 | 7 | `04-maps-location-and-geogrid-test.md` again | read-only | 2–4 weeks later, signed out AND signed in, compared with the baseline |
 
+For any company (with or without a local profile), also run `07-ai-source-map-and-offsite-entity.md` (read-only): which third-party sources AI engines cite for the brand, and the state of Wikidata, Wikipedia, Namuwiki, the knowledge panel and profiles. Repeat it monthly while off-site work is running.
+
 Why this order:
 - **Read-only checks come first.** The real state of the profile is often different from what the owner remembers: wrong category, missing hours, an owner-written review, duplicate listings on the same pin.
 - **Edits are split into two stages.** Address changes can trigger re-verification, and bundling them with other edits makes it impossible to tell which change caused a problem.

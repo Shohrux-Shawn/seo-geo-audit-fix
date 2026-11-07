@@ -20,8 +20,8 @@ and examples). Sitemap and submission mechanics: `sitemaps-and-submission.md`.
 | Situation | Use |
 |---|---|
 | "Why aren't my pages indexed?", "Discovered – currently not indexed" grew, Bing sitemap error, Naver index count flat, re-audit at +14/+28 days | **a separate indexing-audit skill, if you have one** (typical tools: a Search Console harvester, a page checker, a sitemap checker, a classifier, URL-pattern grouping, Bing and GSC API clients, an nginx bot-log summary). Without one: this file + `scripts/sitemap_validate.py` + `scripts/gsc_sitemaps.py`. |
-| Rankings, local pack, NAP, Business Profile, AI-answer visibility, content/compliance, network risk | **this skill** (seo-geo-audit-fix), modules A–H |
-| Full audit of a site that also has index problems | This skill for modules A–H; switch to the indexing-audit skill (or this file) for module A's index buckets, then bring its findings back into the Step 3 table |
+| Rankings, local pack, NAP, Business Profile, AI-answer visibility, content/compliance, network risk | **this skill** (seo-geo-audit-fix), modules A–I |
+| Full audit of a site that also has index problems | This skill for modules A–I; switch to the indexing-audit skill (or this file) for module A's index buckets, then bring its findings back into the Step 3 table |
 | Quick one-off (one URL, one bucket) | This file is enough |
 
 Typical modes of a full indexing audit: **Full audit** (01→06, then 07) · **Fix wave** (07→08 per item) · **Re-audit** (10) · **Single question** (jump to the matching workflow).

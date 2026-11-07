@@ -4,6 +4,8 @@ A Claude skill that audits a website — or a whole network of sites — for **S
 
 It works in any market, with extra depth for **Korea** (Naver Search Advisor, Naver Smart Place, Naver KnowledgeiN, Daum Webmaster Tools, Kakao Map, Korean attorney-advertising rules), where Google-only habits miss half the picture.
 
+It also covers the **off-site entity layer** that AI engines actually read — Wikidata, Wikipedia, Namuwiki, the Google knowledge panel, company profiles and earned mentions — so that ChatGPT, Perplexity, Google AI Overviews and Naver AI Briefing describe a company quickly and correctly, within the wikis' conflict-of-interest rules.
+
 It also teaches the AI that uses it **how to change code safely** (redirects, canonical/hreflang, JSON-LD, robots.txt, Core Web Vitals, CMS persistence) and **how to build, validate and submit sitemaps** to Google Search Console, Bing, IndexNow, Naver and Daum.
 
 ## What it does
@@ -13,7 +15,7 @@ The skill runs one repeatable loop:
 **audit → evidence → fixes → approval → verification**
 
 1. **Fact sheet first.** Build or reuse a `seo-geo-facts.md` with sites, entity/NAP facts, markets, access and owner decisions. Every listed domain is resolved before it is audited.
-2. **Audit modules A–H.** Reachability and crawl, on-page, structured data and entity, performance, content quality and network risk, local profiles (Google Business Profile, Naver Smart Place, Kakao Map), NAP consistency across the web, rankings and AI answers.
+2. **Audit modules A–I.** Reachability and crawl, on-page, structured data and entity, performance, content quality and network risk, local profiles (Google Business Profile, Naver Smart Place, Kakao Map), NAP consistency across the web, rankings and AI answers, and off-site entity authority (AI source map, Wikidata/Wikipedia/Namuwiki, knowledge panel, profiles, earned mentions).
 3. **Evidence for every claim.** URL + exact text or numbers. Anything not checked is marked NOT VERIFIED.
 4. **Scored findings and a fix plan.** Severity, owner, effort and a verification step for each fix; owner decisions override generic advice and are listed under "Skipped by owner decision".
 5. **Apply only after approval.** Code, CMS, sitemap-submission and listing changes are staged and approved per group, following a safe change workflow (branch → minimal diff → tests/build → deploy → live curl check).
@@ -32,6 +34,7 @@ seo-geo-audit-fix/
 │   ├── multisite-and-technical.md        # satellite architecture, doorway risk, setup checklist, migration, deploy
 │   ├── lessons-learned.md                # symptom → cause → fix → early detection, from real incidents
 │   ├── case-study-multisite-law-firm.md  # anonymised worked example: main site + 6 satellites
+│   ├── entity-authority-and-off-site.md  # AI citation sources, Wikidata/Wikipedia/Namuwiki, knowledge panel, profiles, PR, COI rules
 │   ├── implementation-playbook.md        # code recipes: redirects, canonical/hreflang, JSON-LD, CWV, CMS, curl checks
 │   ├── sitemaps-and-submission.md        # sitemap protocol, generation per stack, GSC/Bing/IndexNow/Naver/Daum steps
 │   └── sources.md                        # verified official sources, with the verification date
@@ -42,7 +45,8 @@ seo-geo-audit-fix/
 │   ├── indexnow_submit.py                # IndexNow key-file check and batch submit (--apply)
 │   ├── gsc_sitemaps.py                   # Search Console sitemaps list/submit via service account (--apply)
 │   ├── nap_compare.py                    # NAP master table and mismatches
-│   └── geo_grid.py                       # Google Maps geo-grid plan + summary
+│   ├── geo_grid.py                       # Google Maps geo-grid plan + summary
+│   └── wikidata_entity_check.py          # Wikidata item completeness + site sameAs/P856 link check
 └── templates/
     ├── seo-geo-facts.md                  # Step 0 fact sheet
     └── browser-prompts/                  # fill-in prompts for a browser agent (Claude in Chrome etc.)
@@ -52,7 +56,8 @@ seo-geo-audit-fix/
         ├── 03-gbp-readonly-status-check.md   # strict read-only, run before any profile edit
         ├── 04-maps-location-and-geogrid-test.md
         ├── 05-gbp-update-stage1.md       # category, hours, description, services, replies
-        └── 06-gbp-update-stage2.md       # attributes, retried replies, address change last
+        ├── 06-gbp-update-stage2.md       # attributes, retried replies, address change last
+        └── 07-ai-source-map-and-offsite-entity.md  # which sources AI cites for the brand + entity inventory
 ```
 
 ## Install
@@ -77,6 +82,7 @@ The skill works best with a web-fetch or crawling tool (e.g. Firecrawl) and a br
 - "Run a geo-grid test for '<city> lawyer' around our office and summarise where we rank."
 - "Do ChatGPT, Perplexity and Google AI Overviews mention us? Trace every wrong fact back to its source page."
 - "We want to raise publishing to 50 articles a day across 5 sites. Is that safe?"
+- "What do ChatGPT and Perplexity say about our company, where do they get it, and should we be on Wikidata or Wikipedia?"
 - "Our sitemap shows 3,000 URLs but only 1,200 are indexed. Validate it, fix the generator in our Next.js app and submit it again."
 
 ## Scripts
@@ -97,6 +103,10 @@ python3 scripts/geo_grid.py summary grid/results.csv > grid/summary.md
 
 # Module A: validate a sitemap index (sample of 500 URLs)
 python3 scripts/sitemap_validate.py https://www.example.com/sitemap.xml --host www.example.com --max 500 --out ./sitemap-out
+
+# Module I: find the company's Wikidata item, then check it against the site's JSON-LD
+python3 scripts/wikidata_entity_check.py --search "Example Law Firm" --lang ko
+python3 scripts/wikidata_entity_check.py --qid Q12345 --site https://www.example.com --langs en,ko --out ./entity-out
 
 # After approval: IndexNow for changed URLs (dry run first; key in INDEXNOW_KEY)
 python3 scripts/indexnow_submit.py --host www.example.com --urls-file changed.txt          # dry run
@@ -119,6 +129,7 @@ python3 scripts/gsc_sitemaps.py submit --site sc-domain:example.com --sitemap ht
 - **No secrets in output.** API keys, IndexNow keys and service-account files stay in environment variables and are never printed in full.
 - **Dry run by default.** Scripts that submit to search engines do nothing until `--apply` is given, and the skill asks before using it.
 - **Regulated industries.** Content changes for law, medicine and finance need human approval; claims must be verifiable.
+- **Wikis by the rules.** Wikidata, Wikipedia and Namuwiki work is done by a named person with disclosed conflict of interest, through talk-page requests where required; no paid wiki or "knowledge panel" services, no sock puppets, no removing criticism.
 
 ## Contributing
 
@@ -128,7 +139,7 @@ Corrections to the reference rules are welcome; please cite a primary source (of
 
 ## Sources
 
-The official documentation behind the rules (Google Search Central, Search Console, Business Profile, web.dev, sitemaps.org, RFC 9309, schema.org, Bing/IndexNow, Naver Search Advisor, Daum, Kakao, AI-crawler docs, llms.txt, the Korean Bar Association's advertising regulation) is listed in [`references/sources.md`](seo-geo-audit-fix/references/sources.md), with the date each URL was last verified.
+The official documentation behind the rules (Google Search Central, Search Console, Business Profile, web.dev, sitemaps.org, RFC 9309, schema.org, Bing/IndexNow, Naver Search Advisor, Daum, Kakao, AI-crawler docs, llms.txt, Wikidata/Wikipedia policies, the Knowledge Graph API, the FTC review rule, the Korean Bar Association's advertising regulation) is listed in [`references/sources.md`](seo-geo-audit-fix/references/sources.md), with the date each URL was last verified.
 
 ## Author
 

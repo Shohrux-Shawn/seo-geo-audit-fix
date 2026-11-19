@@ -192,5 +192,6 @@ Sources: [Robots meta tag](https://developers.google.com/search/docs/crawling-in
 - **Next.js routing:** with i18n enabled the default-locale request arrives prefixed, so the rewrite source is `/<defaultLocale>/:path([a-z0-9/-]+)\\.md` with `locale: false`; a middleware matcher that skips dotted paths (`.*\\..*`) lets `.md` through untouched.
 - **llms.txt:** add a "Markdown versions" section listing every `.md` URL; check that each answers 200 after deploy.
 - Dev servers set `PORT` explicitly when testing (the self-fetch uses it).
+- Blocks rendered only in the browser (live counters, widgets filled by client fetch) are missing from the copy; render them on the server if they matter to AI answers.
 
 Sources: [llms.txt proposal](https://llmstxt.org/) · (field experience)

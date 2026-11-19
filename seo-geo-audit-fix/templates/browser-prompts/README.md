@@ -17,6 +17,8 @@ Each prompt can be pasted on its own. Fill every `<placeholder>` from the projec
 | 6 | `06-gbp-update-stage2.md` | **edits** (after approval) | Attributes, retried replies, then the address change alone, last |
 | 7 | `04-maps-location-and-geogrid-test.md` again | read-only | 2–4 weeks later, signed out AND signed in, compared with the baseline |
 
+After a round of fixes (or monthly), run `08-post-fix-remeasure.md` (read-only, one session): structured data and speed per template, head-term positions, the local engine's sections, and AI answers.
+
 For any company (with or without a local profile), also run `07-ai-source-map-and-offsite-entity.md` (read-only): which third-party sources AI engines cite for the brand, and the state of Wikidata, Wikipedia, Namuwiki, the knowledge panel and profiles. Repeat it monthly while off-site work is running.
 
 Why this order:

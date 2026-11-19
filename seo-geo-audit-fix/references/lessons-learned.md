@@ -80,6 +80,24 @@ Sources: [Guidelines for representing your business](https://support.google.com/
 
 ## 3. Network, entity and cannibalisation
 
+**AI engines quoted a second phone and another building name (2026-11)**
+- Symptom: ChatGPT and Gemini gave the direct line instead of the main number, and Gemini gave a building name the website never uses.
+- Cause: the home page JSON-LD published the direct line in `contactPoint.telephone`; the map profile (Google Business Profile) still carried an older building name for the same street address.
+- Fix: one phone in structured data (the main number); correct the profile's address line through its owner account; keep website, profile, local-engine place and llms.txt character-identical.
+- Detect early: ask 2 AI engines "<brand> address and phone" after every NAP change and diff the answer against the fact sheet.
+
+**One office, four local-engine place listings (2026-11)**
+- Symptom: the local engine showed four listings of the same office (office, family centre, criminal centre, housing-association desk), each with its own number; for one query the "family centre" listing ranked instead of the office.
+- Cause: listings were created per campaign over the years.
+- Fix: owner decision — merge, or keep them with one shared main number and clear category separation.
+- Detect early: search the brand on the local engine's map and count listings at the same address.
+
+**Satellites absent for their own head term (2026-11)**
+- Symptom: for "<city> <topic> lawyer", 6 of 7 topic satellites were not in Google's top 30; the main site's `/location/<city>/<topic>` and `/practice/<topic>` pages ranked 12–26 instead.
+- Cause: the main site carries topic × city pages that compete with the satellites for the same intent.
+- Fix: plan only (needs owner decision): decide one target URL per head term and point internal links and the other page's copy at it; do not delete pages without measuring their traffic.
+- Detect early: for every head term record which of our hosts ranks, not only the best position.
+
 **AI: "local firm, go elsewhere for M&A" (2026-11)**
 - Symptom: Google's AI described the firm as a small local office.
 - Cause: the website is one branch office; its schema carried the branch name and local areaServed; nothing linked it to the firm entity (Wikidata, Wikipedia, head-office site), and the AI cited an encyclopedia page instead.
@@ -118,6 +136,12 @@ Sources: [Guidelines for representing your business](https://support.google.com/
 Sources: [Spam policies (doorway abuse)](https://developers.google.com/search/docs/essentials/spam-policies) · [LocalBusiness structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business)
 
 ## 4. CMS, deploy and code hygiene
+
+**Autoplay background videos made pages 24–69 MB (2026-11)**
+- Symptom: PageSpeed mobile: page weight 24 MB (main) and 69 MB (a satellite), lab LCP 69 s and 9.7 s.
+- Cause: hero/section videos of 7.7–33 MB with `preload="auto"` (one with `metadata`), loaded on every visit including mobile.
+- Fix: `preload="none"` plus a poster image, start loading only when the video nears the viewport, skip it on small screens; re-encode the file (720p, ~2–4 MB) when a transcoder is available.
+- Detect early: list every `<video>`/`<source>` on home pages with its Content-Length and preload value.
 
 **Relative upload images 404 on some templates (2026-11)**
 - Symptom: the one unique asset on case pages — the masked court/police notice — showed as a broken image on 2 of 7 sites.
@@ -306,6 +330,17 @@ Sources: [Localized versions](https://developers.google.com/search/docs/specialt
 Sources: [Spam policies (scaled content abuse)](https://developers.google.com/search/docs/essentials/spam-policies) · [Influencing title links](https://developers.google.com/search/docs/appearance/title-link)
 
 ## 7. Working with AI agents and checkers
+
+**Browser agent could not open the local engine or two AI engines (2026-11)**
+- Symptom: the extension refused to open the local search engine; Perplexity and Copilot showed sign-in walls.
+- Cause: site policies toward automated browsers and logged-out use.
+- Fix: plan the fallback in the prompt — a read-only fetch from the target country, labelled "fetched, not seen"; ask the user to sign in for the AI engines.
+- Detect early: open each engine once at the start of the run before planning the query list.
+
+**AI engines invented a biography for the business (2026-11)**
+- Symptom: answers stated a founding year, former public offices and extra credentials that nobody had confirmed.
+- Fix: list every such claim and ask the owner; never copy an AI statement into the site or a profile to "match" it.
+- Detect early: the "is <brand> trustworthy?" question surfaces these fastest.
 
 **Agent overwrote an untracked mirror file without reading it (2026-11)**
 - Symptom: `cp guide.md mirror/guide.md` replaced a same-named file that had existed for months and was not in git.

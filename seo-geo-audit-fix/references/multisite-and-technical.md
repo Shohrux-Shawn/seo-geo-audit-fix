@@ -14,6 +14,8 @@ author's own findings.
 6. Copy-paste and multi-tenant traps
 7. Deploy and verification rules
 8. Search thumbnails and entity linking (branch-office networks)
+9. Technical parity against a competitor
+10. Markdown copies (.md) of key pages for AI crawlers
 
 ---
 
@@ -130,7 +132,7 @@ Sources: (field experience)
 | og:image | One per site, **1200x630**, JPG, under 300 KB (1.5 MB files were found; some previewers drop them). Same visual system on every site of the network (emblem + firm name + "<practice> specialist" line; main site without the line). |
 | File name | A **new file name** whenever the artwork changes: KakaoTalk (and other previewers) cache by image URL. Then clear the preview cache **per page URL** (the Kakao debugger "캐시 초기화" clears only the URL you enter; other pages refresh when their cache expires). |
 | Size tags | Declare `og:image:width/height` only when the size is known (site default image); record images keep no size tags. Add `og:image:alt`. |
-| Large preview | Allow `max-image-preview:large` in **separate `googlebot` and `bingbot` meta tags**, not in `robots`: frameworks de-duplicate `<meta name="robots">` (Next.js `next/head` keeps one), so a default robots tag can silently override a page's own `noindex`. Engines combine directives; the most restrictive still applies. |
+| Large preview | Allow `max-image-preview:large` (and `max-snippet:-1`) in **both** a generic `robots` tag and `googlebot`/`bingbot` tags — Naver and Daum read only `robots`. Give the shared tag a key and every page-level robots tag a **different** key: next/head drops a keyless meta when a same-name meta renders later, keyed metas survive. Engines combine directives; the most restrictive (a page's `noindex`) still applies. (Revised 2026-11; the first version used only googlebot/bingbot tags.) |
 | Schema image | Each site's LocalBusiness/Organization `image` = **its own** og image (all satellites pointed to the main site's logo card). Add `logo` (at least 112 px on both sides, crawlable). |
 | On-page image | Mobile Google picks thumbnails from in-page images: a 270x64 logo as the first `<img>`, or a client-rendered body (57 visible characters in the server HTML), gives it nothing to pick. |
 | Reality check | Google **desktop** showed no organic thumbnails for anyone on local "<city> lawyer" queries; judge thumbnails on mobile Google and Naver. Changes appear days (Google) to weeks (Naver) after re-crawl; request it (GSC URL inspection, Bing Submit URLs, Naver 웹 페이지 수집). |
@@ -144,3 +146,51 @@ Sources: (field experience)
 - Check what the AI cites: for "<firm name>" the AI Overview cited only an encyclopedia page and the Business Profile, not the firm's websites — fix those sources first.
 
 Sources: [Robots meta tag (max-image-preview)](https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag) · [Logo structured data](https://developers.google.com/search/docs/appearance/structured-data/logo) · [Wikipedia COI guideline (ko)](https://ko.wikipedia.org/wiki/위키백과:이해충돌) · (field experience)
+
+---
+
+## 9. Technical parity against a competitor
+
+**(field experience, 2026-11)** Owner's demand: "no technical gap against <national competitor>; content is a separate track". Measure both sites on the same page types (home, case result, Q&A, procedure/practice hub) as Googlebot, then fix only what is real.
+
+| Check | How to measure | Notes |
+|---|---|---|
+| Generic robots meta | count `<meta name="robots">` on indexable pages | Directives only in `googlebot`/`bingbot` tags miss Naver/Daum. Keyed tags, see §8. |
+| HTTP/2 | `openssl s_client -alpn h2 -servername <host> -connect <host>:443` → `ALPN protocol: h2` | Check every host from outside, not the VPS loopback only. |
+| Compression | `curl --compressed -D -` → `content-encoding` | br vs gzip is a minor gap; nginx brotli needs an extra module. |
+| WebSite + SearchAction | JSON-LD on the home page | Site name + sitelinks search box signal. Point `urlTemplate` at the real search page. |
+| JSON-LD on every template | list `@type` per template | Hub/practice pages had **none**: add WebPage + BreadcrumbList. |
+| Record images in schema | `Article.image` on pages that show a document image | The Rich Results Test "non-critical issue" on Article disappears. |
+| FAQPage | Q&A pages, built from the visible question block | Validate with validator.schema.org; Google shows FAQ rich results only for gov/health sites (lessons §5). |
+| Titles | length with suffix, repeated keyword | Trim trailing segments, never the headline. |
+| Descriptions | first 160 characters of 20 random records | Section markers, JSON keys, "Q." labels. |
+| TTFB / page size | `curl -w %{time_starttransfer} %{size_download}` | Ours was 2–4x faster and smaller; keep it. |
+| Security headers, hreflang | headers, `<link rel=alternate>` | The competitor had neither — do not regress to match. |
+| AI layer | `/llms.txt`, Markdown copies (§10) | |
+
+Do **not** copy: `Disallow: /*?*` in robots.txt (it blocks `?page=N` pagination and the competitor's own hashtag search links), or review/rating markup for self-selected testimonials.
+
+**nginx 1.24 HTTP/2 traps (one reload, no downtime):**
+- `http2` is a per-address option: every `listen 443 …` for the same address — **including the `default_server` block** and the `[::]:443` lines — must carry it. Otherwise nginx warns `protocol options redefined for 0.0.0.0:443`, the config still tests OK, and ALPN stays `http/1.1`.
+- Vhosts in `sites-enabled` are often symlinks to `sites-available`: `grep -r` skips them, `grep -R` follows them; edit the real file (`readlink -f`).
+- Certbot-managed lines end in `# managed by Certbot` and IPv6 lines may carry `ipv6only=on`; match those forms explicitly.
+- `cp -a /etc/nginx /root/nginx-backup-<date>` before any `sed`; `.bak` files inside `conf.d/` are not loaded (only `*.conf`), so a sed that also touched them is harmless.
+- Final check: `grep -Rn "listen .*443" … | grep -v http2` must print nothing, then ALPN from outside for every host.
+
+Sources: [Robots meta tag](https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag) · [FAQ rich result changes (2023-08)](https://developers.google.com/search/blog/2023/08/howto-faq-changes) · [nginx http2 / listen](https://nginx.org/en/docs/http/ngx_http_v2_module.html) · (field experience)
+
+---
+
+## 10. Markdown copies (.md) of key pages for AI crawlers
+
+**(field experience, 2026-11)** The competitor listed ~75 `.md` pages in its llms.txt. Our version:
+
+- **Route:** `/<path>.md` (home = `/index.md`) → an API route that fetches the page's **own server HTML** from the same instance (`http://127.0.0.1:$PORT<path>`) and converts the `<main>` landmark to Markdown (headings, lists, tables, links, bold; a card link that wraps a heading becomes `- [heading](url): teaser`). The text is therefore exactly what a visitor sees — no second copy to keep in sync.
+- **Allowlist:** only the pages listed in llms.txt; anything else answers 404. Never an open self-fetch of arbitrary paths (SSRF / amplification).
+- **Headers:** `Content-Type: text/markdown; charset=utf-8`, `X-Robots-Tag: noindex`, `Link: <html url>; rel="canonical"` — the copy must not compete with the HTML page in search.
+- **Cache in-process:** without a CDN, every `.md` request is a full SSR render plus API calls. Cache each path for ~10 minutes and share one in-flight render between concurrent requests; never cache a failed render. Measured: 6 requests → 1 render, then ~8 ms responses.
+- **Next.js routing:** with i18n enabled the default-locale request arrives prefixed, so the rewrite source is `/<defaultLocale>/:path([a-z0-9/-]+)\\.md` with `locale: false`; a middleware matcher that skips dotted paths (`.*\\..*`) lets `.md` through untouched.
+- **llms.txt:** add a "Markdown versions" section listing every `.md` URL; check that each answers 200 after deploy.
+- Dev servers set `PORT` explicitly when testing (the self-fetch uses it).
+
+Sources: [llms.txt proposal](https://llmstxt.org/) · (field experience)

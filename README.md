@@ -31,7 +31,7 @@ seo-geo-audit-fix/
 │   ├── korea-search.md                   # Naver, Daum/Kakao, Google KR, local strategy, legal directories
 │   ├── indexing-audit.md                 # condensed Google/Bing/Naver indexing audit
 │   ├── content-scale-and-quality.md      # publishing volume, scaled-content risk, writing, lawyer-ad compliance
-│   ├── multisite-and-technical.md        # satellite architecture, doorway risk, setup checklist, migration, deploy
+│   ├── multisite-and-technical.md        # satellite architecture, doorway risk, setup checklist, migration, deploy, competitor parity, .md copies for AI
 │   ├── lessons-learned.md                # symptom → cause → fix → early detection, from real incidents
 │   ├── case-study-multisite-law-firm.md  # anonymised worked example: main site + 6 satellites
 │   ├── entity-authority-and-off-site.md  # AI citation sources, Wikidata/Wikipedia/Namuwiki, knowledge panel, profiles, PR, COI rules

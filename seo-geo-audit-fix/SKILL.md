@@ -94,10 +94,14 @@ Run the modules that fit the request. A full audit runs all of them. For each, c
 - A **branch-office** site keeps only its own profiles in `sameAs`; the firm's Wikidata/Wikipedia/head-office identities go on `parentOrganization` (`@id` = Wikidata URL). Each site's `image` is its own og image; add `logo`. Search thumbnails, `max-image-preview` placement and the Wikidata/Wikipedia (COI) workflow → `references/multisite-and-technical.md` §8.
 - People: `ProfilePage` + `Person` (`worksFor` → org `@id`), not a LocalBusiness subtype per person.
 - Articles: `image`, `publisher.logo`, dates. FAQPage only where the Q&A is visible on the page.
+- Home: `WebSite` + `SearchAction` (real site-search URL). Every template carries at least `WebPage` + `BreadcrumbList` (hub pages are the usual gap). Record pages that show a document image put it in `image`.
+- Generic `<meta name="robots">` with `max-snippet:-1, max-image-preview:large` as well as `googlebot`/`bingbot` (Naver/Daum read only `robots`); key it so page-level `noindex` tags survive → `references/multisite-and-technical.md` §8.
 - Validate a sample with validator.schema.org and the Rich Results Test. Report errors and warnings verbatim.
+- The Rich Results Test does not list FAQPage for non-gov/health sites (since 2023-08); validate FAQPage with validator.schema.org instead.
 - **Never** add Review/AggregateRating markup for testimonials the business wrote or selected itself.
 
 ### D. Performance
+- Protocol and compression: HTTP/2 via ALPN for every host (`openssl s_client -alpn h2`), br/gzip. nginx `http2` must be on every `listen 443` incl. `default_server` → `references/multisite-and-technical.md` §9.
 - PageSpeed Insights on mobile for each home template: field CWV (LCP, INP, CLS) and lab values.
 - If LCP is far later than FCP, suspect a hero that is hidden until an animation runs. If CLS is high, find the shifting element (DevTools → Performance → Layout shifts).
 
@@ -159,6 +163,7 @@ Sibling offices that share the brand are not competitors. Missing links between 
   - sources used instead, and **why** they were chosen (registered credentials, directories, reviews).
 - Trace every wrong AI fact back to the page it came from. Fixing that page is usually the fix.
 - GEO rules (AI search bots, quotable structure, llms.txt priority, Copilot citations) → `references/knowledge-base.md` §8.
+- Markdown copies of key pages (`/<path>.md`, allowlisted, noindex + canonical Link, cached) listed in llms.txt → `references/multisite-and-technical.md` §10. A full technical comparison against a competitor → §9.
 
 ### I. Off-site entity authority (wikis, knowledge graph, profiles, earned mentions)
 AI engines describe a company mostly from third-party sources: in industry studies brand *mentions* (web and YouTube) correlate with AI visibility far more than backlinks, and ChatGPT, AI Overviews and Perplexity each lean on different sources (Wikipedia, Reddit, YouTube, LinkedIn, press).

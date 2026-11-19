@@ -18,6 +18,12 @@ listed under the section's Sources.
 
 ## 1. Audit scoping and evidence
 
+**A third-party competitor audit was a third wrong on technical points (2026-11)**
+- Symptom: an audit against a large national competitor listed "no llms.txt", "no RSS on the main site", "no hreflang anywhere", "canonical is the bare host", "no robots meta at all".
+- Cause: it sampled only single-language records (which correctly carry no alternates), grepped `hreflang=` case-sensitively (React emits `hrefLang`), and read `<meta name="robots">` but not the `googlebot`/`bingbot` tags.
+- Fix: re-fetch every claimed defect on the live site before acting. 4 of 12 technical claims were false; the other 8 were real and fixed the same day.
+- Detect early: for each claim keep the exact URL and the exact grep; search attributes case-insensitively; sample every template, not one record type.
+
 **Brief called live sister-office domains "old" (2026-11)**
 - Symptom: plan to deprecate 4 "old" domains on Wikidata.
 - Cause: they were the firm's other offices (head office, regional offices, a specialty centre), all live.
@@ -113,11 +119,46 @@ Sources: [Spam policies (doorway abuse)](https://developers.google.com/search/do
 
 ## 4. CMS, deploy and code hygiene
 
-**A default robots tag could have overridden page noindex (2026-11)**
-- Symptom (avoided): adding `max-image-preview:large` as a default `<meta name="robots">`.
-- Cause: next/head de-duplicates meta by name; login and member pages render their own robots `noindex` in a separate Head, and render order decides which survives.
-- Fix: put the directive in separate `googlebot`/`bingbot` tags; verified a noindex page still carries its noindex.
-- Detect early: list files that render both the shared SEO head and their own robots tag.
+**Relative upload images 404 on some templates (2026-11)**
+- Symptom: the one unique asset on case pages — the masked court/police notice — showed as a broken image on 2 of 7 sites.
+- Cause: the CMS editor stores `<img src="uploads/case/x.png">` (relative) inside the body HTML; on `/cases/<id>` it resolves to `/cases/uploads/…`. Some templates absolutized body images, two did not.
+- Fix: absolutize at render in one shared helper used by every body (article and case, every site). Do not mass-edit the records instead: every edit bumps `updatedAt`/sitemap `lastmod` and pings IndexNow for nothing.
+- Detect early: grep server HTML of each template for `src="uploads/` (or any `src` without scheme or leading slash).
+
+**Upload file names used as image alt (2026-11)**
+- Symptom: `alt="2026-00XXXX_<charge>_masked.png"` on case pages — no description, and the file name carried a police case number.
+- Cause: the editor fills alt with the uploaded file name.
+- Fix: at render, replace only alts that end in an image extension with "<record title> related material (personal data masked)"; hand-written alts stay. Remove identifying numbers from the stored text and alt as well.
+- Detect early: regex `alt="[^"]*\.(png|jpe?g|webp)"` over bodies.
+
+**Item page showed another record (2026-11)**
+- Symptom: `/practice/<area>/<harassment criteria>` showed the record "workplace harassment criteria"; looked like a duplicate URL.
+- Cause: the lookup took the newest record whose title *contains* the item name; the shorter item had its own record that was never reachable.
+- Fix: prefer the record whose title equals the item name, fall back to "contains". No canonical needed — the two URLs now show two different records.
+- Detect early: for every item URL in the sitemap, compare the returned record title with the item name.
+
+**Title template repeated the keyword (2026-11)**
+- Symptom: `<city> <practice> lawyer | <case headline> | <section> | <city> <practice> lawyer - Brand` (73 characters).
+- Cause: editors started putting the keyword in headlines; the template still appended section + keyword.
+- Fix: when the title with its brand suffix exceeds 60 code points, drop trailing ` | ` segments until it fits; the first segment always stays; titles that fit are unchanged.
+
+**dateModified never moved (2026-11)**
+- Symptom: JSON-LD `dateModified` = `datePublished` on records edited weeks later; sitemap `lastmod` disagreed.
+- Cause: the article template already read `updatedAt ?? createdAt`, but the GraphQL document never selected `updatedAt`; the case template used `createdAt` outright.
+- Fix: select `updatedAt` in the detail query and use it in both templates.
+- Detect early: edit one record, then compare its JSON-LD with the API's `updatedAt`.
+
+**Sectioned AI answers leaked into meta descriptions (2026-11)**
+- Symptom: descriptions such as `"I. Conclusion": "…` (raw JSON, 26 records) and ~570 that ran into `II. Legal issues` inside the first 160 characters.
+- Cause: pipeline answers are written in numbered sections and the summary field was filled from them verbatim.
+- Fix: the description builder keeps the first section only (strip a leading JSON key, cut before the next `II.`); text without sections is unchanged.
+- Detect early: scan summaries for section markers before they become descriptions.
+
+**Default robots tag vs page noindex — solved with keyed tags (2026-11, revised)**
+- Symptom: `max-snippet` / `max-image-preview` lived only in `googlebot`/`bingbot` tags, so Naver, Daum and other crawlers that read only `<meta name="robots">` never received them.
+- Cause (the trap that first kept the generic tag out): next/head drops a **keyless** meta when another meta with the same `name` renders later in the tree; a **keyed** meta is never de-duplicated by name, only by key.
+- Fix: the shared head renders `<meta key="robots" name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">` (or the page's noindex); every page that writes its own robots tag gives it a different key (`key="robots-page"`). Both tags survive and engines apply the most restrictive one. Verified on login, member and AI-chat pages after deploy.
+- Detect early: fetch every noindex page type and count robots tags; `noindex` must still be there.
 
 **Local Docker auto-start rewrote the working repo (2026-11)**
 - Symptom: lockfile rewritten (−2,957 lines) and Linux binaries in `apps/*/node_modules`.
@@ -164,6 +205,12 @@ Sources: [Spam policies (doorway abuse)](https://developers.google.com/search/do
 Sources: [Verify site ownership](https://support.google.com/webmasters/answer/9008080) · [General structured data guidelines (markup must match accurate, visible content)](https://developers.google.com/search/docs/appearance/structured-data/sd-policies) · fixes: `implementation-playbook.md` §1 and §11
 
 ## 5. Indexing, sitemaps and i18n
+
+**FAQPage "missing" in the Rich Results Test (2026-11)**
+- Symptom: FAQPage added to Q&A pages (built from the visible question block only); the Rich Results Test listed only Article and Breadcrumbs.
+- Cause: since 2023-08 Google shows FAQ rich results only for well-known government and health sites; the test does not list FAQ for others. The markup is still valid and still read by AI answer engines.
+- Fix: validate FAQPage with validator.schema.org (0 errors, 0 warnings); measure its value in AI answers, not in SERP features.
+- Detect early: do not report "FAQ not detected" in the Rich Results Test as a defect.
 
 **Representative thumbnail missing everywhere (2026-11)**
 - Cause: mixed og images (925x657 logo card, 1.5 MB photos), satellites' schema image pointing at the main site, no logo, no large-preview permission, client-rendered body with no meaningful in-page image.
@@ -259,6 +306,12 @@ Sources: [Localized versions](https://developers.google.com/search/docs/specialt
 Sources: [Spam policies (scaled content abuse)](https://developers.google.com/search/docs/essentials/spam-policies) · [Influencing title links](https://developers.google.com/search/docs/appearance/title-link)
 
 ## 7. Working with AI agents and checkers
+
+**Agent overwrote an untracked mirror file without reading it (2026-11)**
+- Symptom: `cp guide.md mirror/guide.md` replaced a same-named file that had existed for months and was not in git.
+- Cause: the agent assumed the mirror was a plain copy.
+- Fix: a line-subset check showed every line of the old file inside the new one, so nothing was lost this time.
+- Detect early: before writing over any existing path: `stat`, `git status` of that path, diff. Untracked means no undo.
 
 **Parallel agents all "clean", 6 collisions together (2026-09)**
 - Cause: each agent sees only its own slice; corrections collided again.

@@ -1,6 +1,8 @@
 # seo-geo-audit-fix
 
-A Claude skill that audits a website — or a whole network of sites — for **SEO, local SEO and GEO** (visibility in AI answers), proves every finding with live evidence, and turns the findings into exact fixes that are applied only after approval and then verified live.
+A Claude skill that audits **any website or web app** — a local business, an online store, a SaaS product, a media site, a marketplace, a docs site, or a whole network of sites, on any framework or CMS — for **SEO, GEO** (visibility in AI answers) and, where it applies, **local SEO**. It proves every finding with live evidence and turns the findings into exact fixes that are applied only after approval and then verified live.
+
+A **site profile** set at the start decides which checks run: rendering (what crawlers and AI engines get without JavaScript) on every site; faceted navigation, variants and product data for stores; keeping app routes and preview hosts out of the index for SaaS; authors and freshness for media; Business Profile, map and NAP checks only for businesses with a physical location.
 
 It works in any market, with extra depth for **Korea** (Naver Search Advisor, Naver Smart Place, Naver KnowledgeiN, Daum Webmaster Tools, Kakao Map, Korean attorney-advertising rules), where Google-only habits miss half the picture.
 
@@ -14,8 +16,8 @@ The skill runs one repeatable loop:
 
 **audit → evidence → fixes → approval → verification**
 
-1. **Fact sheet first.** Build or reuse a `seo-geo-facts.md` with sites, entity/NAP facts, markets, access and owner decisions. Every listed domain is resolved before it is audited.
-2. **Audit modules A–I.** Reachability and crawl, on-page, structured data and entity, performance, content quality and network risk, local profiles (Google Business Profile, Naver Smart Place, Kakao Map), NAP consistency across the web, rankings and AI answers, and off-site entity authority (AI source map, Wikidata/Wikipedia/Namuwiki, knowledge panel, profiles, earned mentions).
+1. **Site profile and fact sheet first.** Set each site's profile (local, e-commerce, SaaS/web app, content, UGC, docs, network), rendering mode and stack; build or reuse a `seo-geo-facts.md` with the core facts and the blocks of the profiles that apply. Every listed domain is resolved before it is audited.
+2. **Audit modules A–J, routed by profile.** Reachability and crawl, rendering and JavaScript, on-page, structured data and entity, performance, content quality and network risk, local profiles and NAP consistency (local businesses only), rankings and AI answers, off-site entity authority, and profile checks (e-commerce, SaaS/web app, content, UGC, docs, networks). Modules that do not apply are reported as not applicable.
 3. **Evidence for every claim.** URL + exact text or numbers. Anything not checked is marked NOT VERIFIED.
 4. **Scored findings and a fix plan.** Severity, owner, effort and a verification step for each fix; owner decisions override generic advice and are listed under "Skipped by owner decision".
 5. **Apply only after approval.** Code, CMS, sitemap-submission and listing changes are staged and approved per group, following a safe change workflow (branch → minimal diff → tests/build → deploy → live curl check).
@@ -27,6 +29,9 @@ The skill runs one repeatable loop:
 seo-geo-audit-fix/
 ├── SKILL.md                              # the workflow Claude follows
 ├── references/
+│   ├── site-profiles.md                  # profile choice, module routing table, checks for local, e-commerce, SaaS/web app, content, UGC, docs, networks
+│   ├── rendering-and-javascript.md       # what crawlers and AI engines get without JavaScript; SPA failures and fixes
+│   ├── stacks.md                         # where SEO controls live: Next.js, Nuxt, SvelteKit, Astro, Remix, Angular, WordPress, Shopify, builders, hosts
 │   ├── knowledge-base.md                 # core SEO + GEO rules (crawl, on-page, schema, E-E-A-T, links, GEO, measurement)
 │   ├── korea-search.md                   # Naver, Daum/Kakao, Google KR, local strategy, legal directories
 │   ├── indexing-audit.md                 # condensed Google/Bing/Naver indexing audit
@@ -48,7 +53,7 @@ seo-geo-audit-fix/
 │   ├── geo_grid.py                       # Google Maps geo-grid plan + summary
 │   └── wikidata_entity_check.py          # Wikidata item completeness + site sameAs/P856 link check
 └── templates/
-    ├── seo-geo-facts.md                  # Step 0 fact sheet
+    ├── seo-geo-facts.md                  # Step 0 fact sheet (core + per-profile blocks)
     └── browser-prompts/                  # fill-in prompts for a browser agent (Claude in Chrome etc.)
         ├── README.md                     # order of use + shared safety rules
         ├── 01-site-network-audit.md
@@ -57,7 +62,9 @@ seo-geo-audit-fix/
         ├── 04-maps-location-and-geogrid-test.md
         ├── 05-gbp-update-stage1.md       # category, hours, description, services, replies
         ├── 06-gbp-update-stage2.md       # attributes, retried replies, address change last
-        └── 07-ai-source-map-and-offsite-entity.md  # which sources AI cites for the brand + entity inventory
+        ├── 07-ai-source-map-and-offsite-entity.md  # which sources AI cites for the brand + entity inventory
+        ├── 08-post-fix-remeasure.md      # technical + rankings + local engine + AI answers, one session
+        └── 09-gsc-query-page-cannibalisation.md  # Search Console query → page table before any consolidation
 ```
 
 ## Install

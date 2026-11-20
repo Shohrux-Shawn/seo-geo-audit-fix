@@ -4,6 +4,11 @@ These are ready-to-fill prompts for a browser agent, such as Claude in Chrome. U
 
 Each prompt can be pasted on its own. Fill every `<placeholder>` from the project's `seo-geo-facts.md` before sending.
 
+Which prompts apply depends on the site profile (`references/site-profiles.md`):
+- **Every site:** 01 (site audit), 02 (entity, rankings and AI answers), 07 (AI source map and off-site entity), 08 (re-measure), 09 (Search Console query → page data, for networks or any cannibalisation question).
+- **Local businesses only:** 03–06 (Business Profile checks and edits) and the local parts of 01, 02 and 08 (address, hours, map pack, geo-grid, local engines).
+- **No physical location** (online store, SaaS, media, marketplace, docs): delete the NAP, hours, map and local-engine lines from 01/02/08 before sending, and replace the city + service queries with category, product/feature and comparison queries ("best <category>", "<brand> vs <competitor>", "<brand> pricing"). Add to 01 a raw-HTML vs rendered check per template (`references/rendering-and-javascript.md` §3).
+
 ## Order of use for a business with a local profile
 
 | Step | Template | Mode | When |

@@ -24,7 +24,8 @@ comes from an industry study that was not re-verified for this list.
 13. Korean attorney-advertising regulation
 14. Framework and server documentation (implementation)
 15. Off-site entity sources: Wikidata, Wikipedia, Knowledge Graph, review rules
-16. Dropped or redirected URLs
+16. Site profiles, JavaScript rendering and other stacks (verified 2026-11-20)
+17. Dropped or redirected URLs
 
 ---
 
@@ -255,7 +256,43 @@ Industry studies cited as **(third-party study)**, not re-verified: [Ahrefs, AI 
 Namuwiki's editing-policy pages (`나무위키:편집지침`) returned no readable policy text to the scraper on
 2026-11-07; the Namuwiki notes are therefore marked (field experience).
 
-## 16. Dropped or redirected URLs
+## 16. Site profiles, JavaScript rendering and other stacks (verified 2026-11-20)
+
+Fetched on 2026-11-20 (HTTP 200). Used by `site-profiles.md`, `rendering-and-javascript.md` and `stacks.md`.
+
+| Topic | URL |
+|---|---|
+| JavaScript SEO basics (rendering queue, links, status codes) | https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics |
+| Fix JavaScript issues in Search | https://developers.google.com/search/docs/crawling-indexing/javascript/fix-search-javascript |
+| Dynamic rendering is a workaround, not a recommended solution | https://developers.google.com/search/docs/crawling-indexing/javascript/dynamic-rendering |
+| Crawlable links (`<a href>`) | https://developers.google.com/search/docs/crawling-indexing/links-crawlable |
+| AI crawlers do not render JavaScript (Vercel + MERJ log study, 2024; industry study) | https://vercel.com/blog/the-rise-of-the-ai-crawler |
+| E-commerce in Google Search | https://developers.google.com/search/docs/specialty/ecommerce |
+| E-commerce URL structure | https://developers.google.com/search/docs/specialty/ecommerce/designing-a-url-structure-for-ecommerce-sites |
+| Pagination and incremental page loading | https://developers.google.com/search/docs/specialty/ecommerce/pagination-and-incremental-page-loading |
+| Faceted navigation (robots.txt disallow or URL fragments for filters) | https://developers.google.com/search/docs/crawling-indexing/crawling-managing-faceted-navigation |
+| Crawl budget for large sites | https://developers.google.com/search/docs/crawling-indexing/large-site-managing-crawl-budget |
+| Product structured data | https://developers.google.com/search/docs/appearance/structured-data/product |
+| Merchant listing structured data | https://developers.google.com/search/docs/appearance/structured-data/merchant-listing |
+| Software app structured data | https://developers.google.com/search/docs/appearance/structured-data/software-app |
+| Article structured data | https://developers.google.com/search/docs/appearance/structured-data/article |
+| Organization structured data | https://developers.google.com/search/docs/appearance/structured-data/organization |
+| Video structured data | https://developers.google.com/search/docs/appearance/structured-data/video |
+| Paywalled content | https://developers.google.com/search/docs/appearance/structured-data/paywalled-content |
+| Discussion forum structured data | https://developers.google.com/search/docs/appearance/structured-data/discussion-forum |
+| Block indexing with noindex (robots.txt is not enough) | https://developers.google.com/search/docs/crawling-indexing/block-indexing |
+| Nuxt SEO and meta | https://nuxt.com/docs/getting-started/seo-meta |
+| SvelteKit page options (prerender, ssr, csr) | https://svelte.dev/docs/kit/page-options |
+| Astro sitemap integration | https://docs.astro.build/en/guides/integrations-guide/sitemap/ |
+| React Router pre-rendering | https://reactrouter.com/how-to/pre-rendering |
+| Angular SSR | https://angular.dev/guide/ssr |
+| Vike (SSR/pre-rendering for Vite apps) | https://vike.dev/ |
+| Shopify `robots.txt.liquid` | https://shopify.dev/docs/storefronts/themes/seo/robots-txt |
+| Netlify redirects | https://docs.netlify.com/routing/redirects/ |
+| Cloudflare Pages redirects | https://developers.cloudflare.com/pages/configuration/redirects/ |
+| Vercel project configuration (`vercel.json` redirects, headers) | https://vercel.com/docs/project-configuration |
+
+## 17. Dropped or redirected URLs
 
 - `https://developers.google.com/search/docs/appearance/structured-data/faqpage` — now redirects to the
   Search documentation updates page; Google removed the FAQ rich result documentation on 2026-06-15.

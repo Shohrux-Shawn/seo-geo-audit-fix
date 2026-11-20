@@ -36,8 +36,8 @@ Sites (verified live, canonical host) — role · profile(s) · rendering · sta
 - https://www.example.com — main · e-commerce · SSR · <framework/CMS>, <host/CDN>
 Entity (all profiles):
 - Legal name / brand name (exact spacing); parent organization if any:
-- Official profiles (social, app stores, review platforms, directories):
-- Entity IDs (Wikidata QID, Wikipedia pages per language, Knowledge Graph ID, LinkedIn, Crunchbase):
+- Official profiles (YouTube, Instagram and other social, app stores, review platforms, directories):
+- Entity IDs (Wikidata QID, Wikipedia pages per language, Namuwiki, Knowledge Graph ID, LinkedIn, Crunchbase):
 - Canonical description (1–2 neutral sentences reused on every profile):
 Local business only:
 - Address (road address, building, floor, postcode), geo (lat, lng) from JSON-LD:
@@ -50,7 +50,7 @@ Markets & engines: (e.g. Google <cc>, Bing, Naver, Daum; AI: Google AIO, ChatGPT
 Languages / hreflang set:
 Access available: repo path, CMS admin, GSC, Bing WMT, local webmaster tools, profile manager accounts, browser profile
 Owner decisions (do not contradict):
-- e.g. keep existing figures/stats on page X; no '24h'/'free' claims; entity = company, not a person
+- e.g. keep existing figures/stats on page X; keep repeated region wording; no '24h'/'free' claims; entity = company, not a person
 Regulatory limits (e.g. legal/medical/financial advertising rules):
 Deploy rules (who approves, time windows, one-site-at-a-time):
 ```

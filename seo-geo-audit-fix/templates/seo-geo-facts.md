@@ -13,8 +13,8 @@ Fill the core blocks for every project. Fill a profile block only if that profil
 ## Entity (all profiles)
 - Legal name / brand name (exact spacing):
 - Parent organization (if a branch, subsidiary or product of another company):
-- Official profiles (social, app stores, review platforms, directories):
-- Entity IDs: Wikidata QID · Wikipedia pages (per language) · Knowledge Graph ID · LinkedIn · Crunchbase:
+- Official profiles (YouTube, Instagram and other social, app stores, review platforms, directories):
+- Entity IDs: Wikidata QID · Wikipedia pages (per language) · Namuwiki · Knowledge Graph ID · LinkedIn · Crunchbase:
 - Founded / founders / leaders (as stated on independent sources):
 - Canonical description (1–2 neutral sentences, reused on every profile):
 

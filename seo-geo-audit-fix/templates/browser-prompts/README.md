@@ -19,6 +19,8 @@ Each prompt can be pasted on its own. Fill every `<placeholder>` from the projec
 
 After a round of fixes (or monthly), run `08-post-fix-remeasure.md` (read-only, one session): structured data and speed per template, head-term positions, the local engine's sections, and AI answers.
 
+Before changing anything about two of your own sites competing for the same queries (cross-domain cannibalisation), run `09-gsc-query-page-cannibalisation.md` (read-only): a Search Console query → page table per property and the list of queries where two of your hosts both get impressions.
+
 For any company (with or without a local profile), also run `07-ai-source-map-and-offsite-entity.md` (read-only): which third-party sources AI engines cite for the brand, and the state of Wikidata, Wikipedia, Namuwiki, the knowledge panel and profiles. Repeat it monthly while off-site work is running.
 
 Why this order:

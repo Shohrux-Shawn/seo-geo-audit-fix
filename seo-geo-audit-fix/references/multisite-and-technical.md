@@ -16,6 +16,7 @@ author's own findings.
 8. Search thumbnails and entity linking (branch-office networks)
 9. Technical parity against a competitor
 10. Markdown copies (.md) of key pages for AI crawlers
+11. Free tool pages built on public data (calculators, lookups)
 
 ---
 
@@ -195,3 +196,43 @@ Sources: [Robots meta tag](https://developers.google.com/search/docs/crawling-in
 - Blocks rendered only in the browser (live counters, widgets filled by client fetch) are missing from the copy; render them on the server if they matter to AI answers.
 
 Sources: [llms.txt proposal](https://llmstxt.org/) · (field experience)
+
+## 11. Free tool pages built on public data (calculators, lookups)
+
+**(field experience, 2026-11)** A professional-services site has few pages that people bookmark,
+share or that AI engines cite as a *source of a number*. Small tools fed by official public data
+are such pages: a statutory-deadline calculator (court appeal windows with weekend/holiday
+rollover) and a rental-deposit risk check built on the government's real-transaction API.
+
+Build rules that held up:
+- **Static part does the SEO work.** Render the explanation, the rule table (e.g. every deadline
+  type with its days and legal basis), the document checklist and a FAQ as server HTML. Only the
+  interactive result is client-side. Crawlers and AI engines quote the static part; the widget
+  itself is invisible to them.
+- **Schema:** `WebApplication` (free `Offer`, `provider` = the site's organisation `@id`) +
+  `BreadcrumbList` + `FAQPage` only for the visible Q&A on the page.
+- **One language until translated.** Korean-only tool → other locales return 404 (not a machine
+  copy, not a Korean page under `/en/`); keep it out of the hreflang/locale sitemap loops.
+- **Listing:** sitemap (static routes), llms.txt "main pages" + the `.md` copy allowlist (§10). A
+  tool reachable only through the sitemap is weak: give it at least one internal link from the
+  matching practice page or navigation (visible change → owner approval).
+- **Public-data API keys stay on the server.** Call the upstream from an API route with the key
+  from server env; never `NEXT_PUBLIC_*`. Put shared constants (district codes, type labels) in a
+  separate module so the client component never imports the server module (that drags the fetch
+  code and env reads into the bundle). Add the key to the production env file *before* the
+  container is recreated, and type it with `read -rs` so it never lands in shell history or a log.
+- **Protect the upstream quota:** cache per (service, district, month) for hours (transaction data
+  changes daily at most), share in-flight requests, drop failed results from the cache, per-IP rate
+  limit (~20/min), validate inputs against an allowlist (district code, type), cap free text
+  lengths, `Cache-Control: private, no-store` on personal queries, and never log or store what the
+  visitor typed.
+- **Honest numbers:** medians, not means (one luxury unit skews a district); compute a ratio only
+  with a minimum sample (≥3 deals), state the period and source, exclude cancelled transactions,
+  and say what the data cannot show (liens, tax arrears, senior tenants). A tool that gives a
+  verdict ("safe") is a liability; one that gives reference figures plus "check these documents"
+  is a lead source — end the result with a specific consultation CTA.
+- **Static tables need an owner date.** Until a holiday API key is approved, a hard-coded holiday
+  table (incl. substitute and election days) must name its years and be extended before the
+  next year starts; test edge cases (deadline on Saturday, on a substitute holiday, across New Year).
+
+Sources: [WebApplication / SoftwareApplication structured data](https://developers.google.com/search/docs/appearance/structured-data/software-app) · (field experience)

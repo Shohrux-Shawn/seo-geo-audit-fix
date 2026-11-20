@@ -115,6 +115,12 @@ Sources: [Guidelines for representing your business](https://support.google.com/
 - Fix: one owner URL per query cluster; link the other to it or trim it.
 - Detect early: GSC Pages × Queries per property; list which URL wins each cluster.
 
+**Cross-domain cannibalisation "fixed" by canonical without data — avoided (2026-11)**
+- Symptom: main-site topic × city pages ranked where the satellites should; the quick idea was cross-domain canonicals to the satellites.
+- Cause of the risk: ranking samples show only one query at a time; a canonical moves (or loses) every query the page wins, including long-tail queries no one sampled.
+- Fix: first collect GSC Performance per property, query → page, last 3 months (`templates/browser-prompts/09-gsc-query-page-cannibalisation.md`); act only on query clusters where two of our hosts both get impressions; prefer internal links and copy changes to a canonical.
+- Detect early: a cannibalisation proposal without a query → page table is not ready.
+
 **Sibling offices outrank us for the brand (2026-11)**
 - Symptom: other offices of the same firm appeared above the main office for the brand query.
 - Cause: the brand entity was never mapped; no cross-links.
@@ -227,6 +233,12 @@ Sources: [Spam policies (doorway abuse)](https://developers.google.com/search/do
 - Detect early: create one test record from the new domain and check logs.
 
 Sources: [Verify site ownership](https://support.google.com/webmasters/answer/9008080) · [General structured data guidelines (markup must match accurate, visible content)](https://developers.google.com/search/docs/appearance/structured-data/sd-policies) · fixes: `implementation-playbook.md` §1 and §11
+
+**Client component pulled the server data module into the bundle (2026-11)**
+- Symptom: a tool's form imported district codes from the module that also held the upstream fetch and env read.
+- Cause: constants and server code in one file.
+- Fix: constants in their own module; the server module re-exports them; the client imports only constants and types.
+- Detect early: grep client components for imports of files that read `process.env` without `NEXT_PUBLIC_`.
 
 ## 5. Indexing, sitemaps and i18n
 

@@ -163,7 +163,7 @@ Sibling offices that share the brand are not competitors. Missing links between 
   - sources used instead, and **why** they were chosen (registered credentials, directories, reviews).
 - Trace every wrong AI fact back to the page it came from. Fixing that page is usually the fix.
 - GEO rules (AI search bots, quotable structure, llms.txt priority, Copilot citations) → `references/knowledge-base.md` §8.
-- Markdown copies of key pages (`/<path>.md`, allowlisted, noindex + canonical Link, cached) listed in llms.txt → `references/multisite-and-technical.md` §10. A full technical comparison against a competitor → §9.
+- Markdown copies of key pages (`/<path>.md`, allowlisted, noindex + canonical Link, cached) listed in llms.txt → `references/multisite-and-technical.md` §10. A full technical comparison against a competitor → §9. Free tool pages on public data (calculators, lookups) as citable, linkable pages → §11.
 
 ### I. Off-site entity authority (wikis, knowledge graph, profiles, earned mentions)
 AI engines describe a company mostly from third-party sources: in industry studies brand *mentions* (web and YouTube) correlate with AI visibility far more than backlinks, and ChatGPT, AI Overviews and Perplexity each lean on different sources (Wikipedia, Reddit, YouTube, LinkedIn, press).
@@ -260,7 +260,7 @@ Ask for approval per group, unless the user already approved that exact change.
 Use these instead of writing ad-hoc code. All of them are read-only or dry-run by default (anything that sends data needs `--apply`); run any one with `--help` for usage. Secrets come from environment variables only.
 
 - **`templates/seo-geo-facts.md`** — Step 0 fact sheet. Copy it into the project and fill it in.
-- **`templates/browser-prompts/`** — eight fill-in prompts for a browser agent: 01 site/network audit · 02 entity/NAP + rankings + GEO live test · 03 strict read-only Business Profile status check · 04 Maps pin/duplicates/geo-grid/map-pack test · 05 profile update stage 1 · 06 profile update stage 2 · 07 AI source map + off-site entity inventory · 08 post-fix re-measure (technical + rankings + local engine + AI answers, one session). Its README gives the order and the shared rules.
+- **`templates/browser-prompts/`** — nine fill-in prompts for a browser agent: 01 site/network audit · 02 entity/NAP + rankings + GEO live test · 03 strict read-only Business Profile status check · 04 Maps pin/duplicates/geo-grid/map-pack test · 05 profile update stage 1 · 06 profile update stage 2 · 07 AI source map + off-site entity inventory · 08 post-fix re-measure (technical + rankings + local engine + AI answers, one session) · 09 Search Console query → page table for cross-domain cannibalisation (read-only). Its README gives the order and the shared rules.
 - **`scripts/wikidata_entity_check.py --search "<name>" --lang ko`** then **`--qid Q… --site https://www.example.com --langs en,ko --out DIR`** — module I: labels/descriptions per language, missing core statements, unreferenced core statements, profile identifiers, Wikipedia sitelinks, and whether the site's Organization JSON-LD links the item and matches P856. Read-only (public Wikidata API + one page GET).
 - **`scripts/site_check.py <site>... --max-urls N --forbidden "a,b" --out DIR`**
   - Covers modules A/B/E: redirects, robots/AI bots, llms.txt, sitemap crawl, per-page tags, duplicates, thin pages, forbidden wording, UTM links.
